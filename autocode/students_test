@@ -236,3 +236,39 @@ func Compare(arr1, arr2 []int) bool {
 	}
 	return true
 }
+
+func Test_Cols(t *testing.T){
+	var j, k int
+
+	data := struct {
+		matrix Matrix
+		Expected [][]int
+	}{
+		matrix: Matrix{
+			rows: 3,
+			cols: 4,
+			data: []int{
+				15, 54, 44, 42,
+				12, 12, 43, 516,
+				23, 52, 32, 36,
+			},
+		},
+		Expected: [][]int{
+			{15,12,23},
+			{54,12,52},
+			{44,43,32},
+			{42,516,36},
+		},
+	}
+
+	got := data.matrix.Cols() 
+
+	for i := 0; i < len(data.Expected) && j < len(got); i++ {
+		res := Compare(data.Expected[k], got[k])
+		if !res {
+			t.Errorf("got %v want %v", got[k], data.Expected[k])
+		}
+		j++
+		k++
+	}
+}
