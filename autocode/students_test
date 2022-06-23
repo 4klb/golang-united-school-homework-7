@@ -273,40 +273,72 @@ func Test_Cols(t *testing.T) {
 func Test_Set(t *testing.T) {
 	var j, k int
 
-	data := struct {
+	data := []struct {
 		matrix   Matrix
 		Expected [][]int
+		rows     int
+		cols     int
+		value    int
 	}{
-		matrix: Matrix{
-			rows: 3,
-			cols: 4,
-			data: []int{
-				15, 54, 44, 42,
-				12, 12, 43, 516,
-				23, 52, 32, 36,
+		{
+			matrix: Matrix{
+				rows: 3,
+				cols: 4,
+				data: []int{
+					15, 54, 44, 42,
+					12, 12, 43, 516,
+					23, 52, 32, 36,
+				},
 			},
+			Expected: [][]int{
+				{99, 54, 44, 42},
+				{12, 12, 43, 516},
+				{23, 52, 32, 36},
+			},
+			rows:  -1,
+			cols:  0,
+			value: 99,
 		},
-		Expected: [][]int{
-			{99, 54, 44, 42},
-			{12, 12, 43, 516},
-			{23, 52, 32, 36},
+		{
+			matrix: Matrix{
+				rows: 3,
+				cols: 4,
+				data: []int{
+					15, 54, 44, 42,
+					12, 12, 43, 516,
+					23, 52, 32, 36,
+				},
+			},
+			Expected: [][]int{
+				{99, 54, 44, 42},
+				{12, 12, 43, 516},
+				{23, 52, 32, 36},
+			},
+			rows:  0,
+			cols:  0,
+			value: 99,
 		},
 	}
 
-	got := data.matrix.Set(0, 0, 99)
+	for _, d := range data {
+		got := d.matrix.Set(d.rows, d.cols, d.value)
+		// got := data.matrix[i].Set(i)
 
-	if !got {
-		t.Errorf("could not put a value into the matrix")
-	}
-
-	getRows := data.matrix.Rows()
-
-	for i := 0; i < len(data.Expected) && j < len(getRows); i++ {
-		res := Compare(data.Expected[k], getRows[k])
-		if !res {
-			t.Errorf(errGotWant, getRows[k], data.Expected[k])
+		if !got {
+			t.Errorf("could not put a value into the matrix")
 		}
-		j++
-		k++
+
+		// got = data.matrix.Set(0, 0, 99)
+
+		getRows := d.matrix.Rows()
+
+		for i := 0; i < len(d.Expected) && j < len(getRows); i++ {
+			res := Compare(d.Expected[k], getRows[k])
+			if !res {
+				t.Errorf(errGotWant, getRows[k], d.Expected[k])
+			}
+			j++
+			k++
+		}
 	}
 }
