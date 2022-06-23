@@ -1,10 +1,14 @@
 package coverage
 
 import (
+	"log"
 	"os"
 	"testing"
-	"log"
 	"time"
+)
+
+var (
+	errGotWant = "got %v want %v"
 )
 
 // DO NOT EDIT THIS FUNCTION
@@ -49,7 +53,7 @@ func Test_Len(t *testing.T) {
 	for _, data := range sdata {
 		got := data.people.Len()
 		if got != data.Expected {
-			t.Errorf("got %v want %v", got, data.Expected)
+			t.Errorf(errGotWant, got, data.Expected)
 		}
 	}
 }
@@ -96,7 +100,7 @@ func Test_Less(t *testing.T) {
 			got := tcase.people.Less(i, i+1)
 			// })
 			if got != tcase.Expected {
-				t.Errorf("got %v want %v", got, tcase.Expected)
+				t.Errorf(errGotWant, got, tcase.Expected)
 			}
 		}
 	}
@@ -139,10 +143,10 @@ func Test_Swap(t *testing.T) {
 	for i := 0; i < len(data)-1; i++ {
 		f := data[i].people[i]
 		s := data[i].people[i+1]
-		data[i].people.Swap(i, i +1)	
-		if f != data[i].people[i+1] && s != data[i].people[i]{
+		data[i].people.Swap(i, i+1)
+		if f != data[i].people[i+1] && s != data[i].people[i] {
 			t.Errorf("got %v %v want %v %v", i, i+1, s, f)
-		} else{
+		} else {
 			continue
 		}
 	}
@@ -178,24 +182,24 @@ func Test_New(t *testing.T) {
 		}
 
 		if got.rows != data.matrix.rows {
-			t.Errorf("got %v want %v", got.rows, data.matrix.rows)
+			t.Errorf(errGotWant, got.rows, data.matrix.rows)
 		} else if got.cols != data.matrix.cols {
-			t.Errorf("got %v want %v", got.cols, data.matrix.cols)
+			t.Errorf(errGotWant, got.cols, data.matrix.cols)
 		}
 		for i := 0; i < len(got.data) && j < len(data.matrix.data); i++ {
 			if got.data[i] != data.matrix.data[j] {
-				t.Errorf("got %v want %v", got.data[i], data.matrix.data[j])
+				t.Errorf(errGotWant, got.data[i], data.matrix.data[j])
 			}
 			j++
 		}
 	}
 }
 
-func Test_Rows(t *testing.T){
+func Test_Rows(t *testing.T) {
 	var j, k int
 
 	data := struct {
-		matrix Matrix
+		matrix   Matrix
 		Expected [][]int
 	}{
 		matrix: Matrix{
@@ -208,18 +212,18 @@ func Test_Rows(t *testing.T){
 			},
 		},
 		Expected: [][]int{
-			{15, 54, 44, 42}, 
+			{15, 54, 44, 42},
 			{12, 12, 43, 516},
 			{23, 52, 32, 36},
 		},
 	}
 
-	got := data.matrix.Rows() 
+	got := data.matrix.Rows()
 
 	for i := 0; i < len(data.Expected) && j < len(got); i++ {
 		res := Compare(data.Expected[k], got[k])
 		if !res {
-			t.Errorf("got %v want %v", got[k], data.Expected[k])
+			t.Errorf(errGotWant, got[k], data.Expected[k])
 		}
 		j++
 		k++
@@ -237,11 +241,11 @@ func Compare(arr1, arr2 []int) bool {
 	return true
 }
 
-func Test_Cols(t *testing.T){
+func Test_Cols(t *testing.T) {
 	var j, k int
 
 	data := struct {
-		matrix Matrix
+		matrix   Matrix
 		Expected [][]int
 	}{
 		matrix: Matrix{
@@ -254,30 +258,30 @@ func Test_Cols(t *testing.T){
 			},
 		},
 		Expected: [][]int{
-			{15,12,23},
-			{54,12,52},
-			{44,43,32},
-			{42,516,36},
+			{15, 12, 23},
+			{54, 12, 52},
+			{44, 43, 32},
+			{42, 516, 36},
 		},
 	}
 
-	got := data.matrix.Cols() 
+	got := data.matrix.Cols()
 
 	for i := 0; i < len(data.Expected) && j < len(got); i++ {
 		res := Compare(data.Expected[k], got[k])
 		if !res {
-			t.Errorf("got %v want %v", got[k], data.Expected[k])
+			t.Errorf(errGotWant, got[k], data.Expected[k])
 		}
 		j++
 		k++
 	}
 }
 
-func Test_Set(t *testing.T){
+func Test_Set(t *testing.T) {
 	var j, k int
 
 	data := struct {
-		matrix Matrix
+		matrix   Matrix
 		Expected [][]int
 	}{
 		matrix: Matrix{
@@ -290,13 +294,13 @@ func Test_Set(t *testing.T){
 			},
 		},
 		Expected: [][]int{
-			{99, 54, 44, 42}, 
+			{99, 54, 44, 42},
 			{12, 12, 43, 516},
 			{23, 52, 32, 36},
 		},
 	}
 
-	got := data.matrix.Set(0,0,99) 
+	got := data.matrix.Set(0, 0, 99)
 
 	if !got {
 		t.Errorf("could not put a value into the matrix")
@@ -307,7 +311,7 @@ func Test_Set(t *testing.T){
 	for i := 0; i < len(data.Expected) && j < len(getRows); i++ {
 		res := Compare(data.Expected[k], getRows[k])
 		if !res {
-			t.Errorf("got %v want %v", getRows[k], data.Expected[k])
+			t.Errorf(errGotWant, getRows[k], data.Expected[k])
 		}
 		j++
 		k++
