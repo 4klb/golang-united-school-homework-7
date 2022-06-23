@@ -190,3 +190,49 @@ func Test_New(t *testing.T) {
 		}
 	}
 }
+
+func Test_Rows(t *testing.T){
+	var j, k int
+
+	data := struct {
+		matrix Matrix
+		Expected [][]int
+	}{
+		matrix: Matrix{
+			rows: 3,
+			cols: 4,
+			data: []int{
+				15, 54, 44, 42,
+				12, 12, 43, 516,
+				23, 52, 32, 36,
+			},
+		},
+		Expected: [][]int{
+			{15, 54, 44, 42}, 
+			{12, 12, 43, 516},
+			{23, 52, 32, 36},
+		},
+	}
+
+	got := data.matrix.Rows() 
+
+	for i := 0; i < len(data.Expected) && j < len(got); i++ {
+		res := Compare(data.Expected[k], got[k])
+		if !res {
+			t.Errorf("got %v want %v", got[k], data.Expected[k])
+		}
+		j++
+		k++
+	}
+}
+
+func Compare(arr1, arr2 []int) bool {
+	var j int
+	for i := 0; i < len(arr1)-1 && j < len(arr2)-1; i++ {
+		if arr1[i] != arr2[j] {
+			return false
+		}
+		j++
+	}
+	return true
+}
