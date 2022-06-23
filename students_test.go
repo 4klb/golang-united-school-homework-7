@@ -272,3 +272,44 @@ func Test_Cols(t *testing.T){
 		k++
 	}
 }
+
+func Test_Set(t *testing.T){
+	var j, k int
+
+	data := struct {
+		matrix Matrix
+		Expected [][]int
+	}{
+		matrix: Matrix{
+			rows: 3,
+			cols: 4,
+			data: []int{
+				15, 54, 44, 42,
+				12, 12, 43, 516,
+				23, 52, 32, 36,
+			},
+		},
+		Expected: [][]int{
+			{99, 54, 44, 42}, 
+			{12, 12, 43, 516},
+			{23, 52, 32, 36},
+		},
+	}
+
+	got := data.matrix.Set(0,0,99) 
+
+	if !got {
+		t.Errorf("could not put a value into the matrix")
+	}
+
+	getRows := data.matrix.Rows()
+
+	for i := 0; i < len(data.Expected) && j < len(getRows); i++ {
+		res := Compare(data.Expected[k], getRows[k])
+		if !res {
+			t.Errorf("got %v want %v", getRows[k], data.Expected[k])
+		}
+		j++
+		k++
+	}
+}
