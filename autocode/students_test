@@ -61,7 +61,7 @@ func Test_Len(t *testing.T) {
 func Test_Less(t *testing.T) {
 	data := []struct {
 		people   People
-		Expected bool
+		Expected []bool
 	}{
 		{
 			people: People{
@@ -71,36 +71,29 @@ func Test_Less(t *testing.T) {
 					birthDay:  time.Now(),
 				},
 				{
+					firstName: "J.R.R.",
+					lastName:  "Obama",
+					birthDay:  time.Now(),
+				},
+				{
 					firstName: "Sergey",
 					lastName:  "Brin",
 					birthDay:  time.Now(),
 				},
-			},
-			Expected: true,
-		},
-		{
-			people: People{
 				{
 					firstName: "J.R.R.",
-					lastName:  "Tolkien",
-					birthDay:  time.Now(),
-				},
-				{
-					firstName: "Agey",
-					lastName:  "Arin",
-					birthDay:  time.Now(),
+					lastName:  "Brin",
+					birthDay:  time.Now().Add(20 * time.Second),
 				},
 			},
-			Expected: false,
+			Expected: []bool{false, true, false, false},
 		},
 	}
 	for _, tcase := range data {
 		for i := 0; i < len(tcase.people)-1; i++ {
-			// t.Run(tcase, func(t *testing.T) {
 			got := tcase.people.Less(i, i+1)
-			// })
-			if got != tcase.Expected {
-				t.Errorf(errGotWant, got, tcase.Expected)
+			if got != tcase.Expected[i] {
+				t.Errorf("got %v want %v", got, tcase.Expected[i])
 			}
 		}
 	}
