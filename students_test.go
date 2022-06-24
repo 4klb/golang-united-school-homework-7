@@ -1,7 +1,7 @@
 package coverage
 
 import (
-	"log"
+	"errors"
 	"os"
 	"testing"
 	"time"
@@ -12,6 +12,7 @@ import (
 var (
 	errGotWant  = "got %v want %v"
 	errSetValue = "could not put a value into the matrix"
+	errNew      = "could not create a matrix"
 )
 
 // DO NOT EDIT THIS FUNCTION
@@ -140,7 +141,8 @@ func Test_Swap(t *testing.T) {
 		f := data[i].people[i]
 		s := data[i].people[i+1]
 		data[i].people.Swap(i, i+1)
-		if !assert.Equal(t, f, data[i].people[i+1]) && !assert.Equal(t, s, data[i].people[i]) {
+		if !assert.Equal(t, f, data[i].people[i+1]) &&
+			!assert.Equal(t, s, data[i].people[i]) {
 			t.Errorf("got %v %v want %v %v", i, i+1, s, f)
 		} else {
 			continue
@@ -149,45 +151,34 @@ func Test_Swap(t *testing.T) {
 }
 
 func Test_New(t *testing.T) {
-	data := []struct {
-		matrix   Matrix
-		Expected [][]int
+	data := map[string]struct {
+		arg string
+		err error
 	}{
-		{
-			matrix: Matrix{
-				rows: 3,
-				cols: 4,
-				data: []int{
-					15, 54, 44, 42,
-					12, 12, 43, 516,
-					23, 52, 32, 36,
-				},
-			},
+		"correct": {
+			arg: `15 54 44
+			12 12 43
+			23 52 32`,
+		},
+		"syntax error": {
+			arg: `15t 54 44
+			12 12 43
+			23 52 32`,
+			err: errors.New("invalid syntax"),
+		},
+		"not equal rows": {
+			arg: `15 54 44 99
+			12 12 43
+			23 52 32`,
+			err: errors.New("Rows need to be the same length"),
 		},
 	}
 
-	for _, data := range data {
-		var j int
-		got, err := New(`15, 54, 44, 42,
-		12, 12, 43, 516,
-		23, 52, 32, 36,
-		`)
-		if err != nil {
-			log.Println(err)
+	for _, value := range data {
+		_, err := New(value.arg)
+		if err != nil && value.err == err {
+			t.Errorf(errNew)
 			return
-		}
-
-		if !assert.Equal(t, got.rows, data.matrix.rows) {
-			t.Errorf(errGotWant, got.rows, data.matrix.rows)
-		} else if !assert.Equal(t, got.cols, data.matrix.cols) {
-			t.Errorf(errGotWant, got.cols, data.matrix.cols)
-		}
-
-		for i := 0; i < len(got.data) && j < len(data.matrix.data); i++ {
-			if !assert.Equal(t, got.data[i], data.matrix.data[j]) {
-				t.Errorf(errGotWant, got.data[i], data.matrix.data[j])
-			}
-			j++
 		}
 	}
 }
@@ -348,7 +339,6 @@ func Test_Set(t *testing.T) {
 
 	for _, tcase := range data {
 		got := tcase.matrix.Set(tcase.rows, tcase.cols, tcase.value)
-		log.Println(got)
 		if !assert.Equal(t, got, tcase.Expected) {
 			t.Errorf(errSetValue)
 		}
