@@ -5,10 +5,13 @@ import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var (
-	errGotWant = "got %v want %v"
+	errGotWant  = "got %v want %v"
+	errSetValue = "could not put a value into the matrix"
 )
 
 // DO NOT EDIT THIS FUNCTION
@@ -52,7 +55,7 @@ func Test_Len(t *testing.T) {
 	}
 	for _, data := range sdata {
 		got := data.people.Len()
-		if got != data.Expected {
+		if !assert.Equal(t, got, data.Expected) {
 			t.Errorf(errGotWant, got, data.Expected)
 		}
 	}
@@ -92,8 +95,8 @@ func Test_Less(t *testing.T) {
 	for _, tcase := range data {
 		for i := 0; i < len(tcase.people)-1; i++ {
 			got := tcase.people.Less(i, i+1)
-			if got != tcase.Expected[i] {
-				t.Errorf("got %v want %v", got, tcase.Expected[i])
+			if !assert.Equal(t, got, tcase.Expected[i]) {
+				t.Errorf(errGotWant, got, tcase.Expected[i])
 			}
 		}
 	}
@@ -137,7 +140,7 @@ func Test_Swap(t *testing.T) {
 		f := data[i].people[i]
 		s := data[i].people[i+1]
 		data[i].people.Swap(i, i+1)
-		if f != data[i].people[i+1] && s != data[i].people[i] {
+		if !assert.Equal(t, f, data[i].people[i+1]) && !assert.Equal(t, s, data[i].people[i]) {
 			t.Errorf("got %v %v want %v %v", i, i+1, s, f)
 		} else {
 			continue
@@ -174,13 +177,14 @@ func Test_New(t *testing.T) {
 			return
 		}
 
-		if got.rows != data.matrix.rows {
+		if !assert.Equal(t, got.rows, data.matrix.rows) {
 			t.Errorf(errGotWant, got.rows, data.matrix.rows)
-		} else if got.cols != data.matrix.cols {
+		} else if !assert.Equal(t, got.cols, data.matrix.cols) {
 			t.Errorf(errGotWant, got.cols, data.matrix.cols)
 		}
+
 		for i := 0; i < len(got.data) && j < len(data.matrix.data); i++ {
-			if got.data[i] != data.matrix.data[j] {
+			if !assert.Equal(t, got.data[i], data.matrix.data[j]) {
 				t.Errorf(errGotWant, got.data[i], data.matrix.data[j])
 			}
 			j++
@@ -214,24 +218,12 @@ func Test_Rows(t *testing.T) {
 	got := data.matrix.Rows()
 
 	for i := 0; i < len(data.Expected) && j < len(got); i++ {
-		res := Compare(data.Expected[k], got[k])
-		if !res {
+		if !assert.Equal(t, data.Expected[k], got[k]) {
 			t.Errorf(errGotWant, got[k], data.Expected[k])
 		}
 		j++
 		k++
 	}
-}
-
-func Compare(arr1, arr2 []int) bool {
-	var j int
-	for i := 0; i < len(arr1)-1 && j < len(arr2)-1; i++ {
-		if arr1[i] != arr2[j] {
-			return false
-		}
-		j++
-	}
-	return true
 }
 
 func Test_Cols(t *testing.T) {
@@ -261,8 +253,7 @@ func Test_Cols(t *testing.T) {
 	got := data.matrix.Cols()
 
 	for i := 0; i < len(data.Expected) && j < len(got); i++ {
-		res := Compare(data.Expected[k], got[k])
-		if !res {
+		if !assert.Equal(t, data.Expected[k], got[k]) {
 			t.Errorf(errGotWant, got[k], data.Expected[k])
 		}
 		j++
@@ -355,11 +346,11 @@ func Test_Set(t *testing.T) {
 		},
 	}
 
-	for _, d := range data {
-		got := d.matrix.Set(d.rows, d.cols, d.value)
+	for _, tcase := range data {
+		got := tcase.matrix.Set(tcase.rows, tcase.cols, tcase.value)
 		log.Println(got)
-		if !got && d.Expected {
-			t.Errorf("could not put a value into the matrix")
+		if !assert.Equal(t, got, tcase.Expected) {
+			t.Errorf(errSetValue)
 		}
 	}
 }
